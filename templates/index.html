@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="description" content="Vue-Formulate example">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Vue Formulate</title>
+
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>
+
+<body>
+  <div class="outtercontainer">
+    <div id="app">
+      <formulate-form v-model="values" name="buycrypto" @submit="submitHandler">
+
+        <div class="orderfields">
+
+            <formulate-input name="quote" placeholder="ex. USDT" type="select" label="Quote" validation="required"
+            :options="{ USDT: 'USDT', BUSD: 'BUSD' }"></formulate-input>
+
+            <formulate-input name="base" placeholder="ex. BTC" type="select" label="Base for USDT" validation="required"
+              v-if="values.quote === 'USDT'"
+              key="USDT"
+              :options="{
+                '1INCH': '1INCH', 'AAVE': 'AAVE', 'ACA': 'ACA', 'ACH': 'ACH', 'ACM': 'ACM', 'ADA': 'ADA', 'ADX': 'ADX', 'AGLD': 'AGLD', 'AION': 'AION', 'AKRO': 'AKRO', 'ALCX': 'ALCX', 'ALGO': 'ALGO', 'ALICE': 'ALICE', 'ALPACA': 'ALPACA', 'ALPHA': 'ALPHA', 'ALPINE': 'ALPINE', 'AMP': 'AMP', 'ANC': 'ANC', 'ANKR': 'ANKR', 'ANT': 'ANT', 'ANY': 'ANY', 'APE': 'APE', 'API3': 'API3', 'AR': 'AR', 'ARDR': 'ARDR', 'ARPA': 'ARPA', 'ASR': 'ASR', 'ASTR': 'ASTR', 'ATA': 'ATA', 'ATM': 'ATM', 'ATOM': 'ATOM', 'AUCTION': 'AUCTION', 'AUD': 'AUD', 'AUDIO': 'AUDIO', 'AUTO': 'AUTO', 'AVA': 'AVA', 'AVAX': 'AVAX', 'AXS': 'AXS', 'BADGER': 'BADGER', 'BAKE': 'BAKE', 'BAL': 'BAL', 'BAND': 'BAND', 'BAR': 'BAR', 'BAT': 'BAT', 'BCC': 'BCC', 'BCH': 'BCH', 'BEAM': 'BEAM', 'BEL': 'BEL', 'BETA': 'BETA', 'BICO': 'BICO', 'BIFI': 'BIFI', 'BKRW': 'BKRW', 'BLZ': 'BLZ', 'BNB': 'BNB', 'BNT': 'BNT', 'BNX': 'BNX', 'BOND': 'BOND', 'BSV': 'BSV', 'BSW': 'BSW', 'BTC': 'BTC', 'BTCST': 'BTCST', 'BTG': 'BTG', 'BTS': 'BTS', 'BTT': 'BTT', 'BTTC': 'BTTC', 'BURGER': 'BURGER', 'BUSD': 'BUSD', 'BZRX': 'BZRX', 'C98': 'C98', 'CAKE': 'CAKE', 'CELO': 'CELO', 'CELR': 'CELR', 'CFX': 'CFX', 'CHESS': 'CHESS', 'CHR': 'CHR', 'CHZ': 'CHZ', 'CITY': 'CITY', 'CKB': 'CKB', 'CLV': 'CLV', 'COCOS': 'COCOS', 'COMP': 'COMP', 'COS': 'COS', 'COTI': 'COTI', 'CRV': 'CRV', 'CTK': 'CTK', 'CTSI': 'CTSI', 'CTXC': 'CTXC', 'CVC': 'CVC', 'CVP': 'CVP', 'CVX': 'CVX', 'DAI': 'DAI', 'DAR': 'DAR', 'DASH': 'DASH', 'DATA': 'DATA', 'DCR': 'DCR', 'DEGO': 'DEGO', 'DENT': 'DENT', 'DEXE': 'DEXE', 'DF': 'DF', 'DGB': 'DGB', 'DIA': 'DIA', 'DNT': 'DNT', 'DOCK': 'DOCK', 'DODO': 'DODO', 'DOGE': 'DOGE', 'DOT': 'DOT', 'DREP': 'DREP', 'DUSK': 'DUSK', 'DYDX': 'DYDX', 'EGLD': 'EGLD', 'ELF': 'ELF', 'ENJ': 'ENJ', 'ENS': 'ENS', 'EOS': 'EOS', 'EPS': 'EPS', 'EPX': 'EPX',
+                'ERD': 'ERD', 'ERN': 'ERN', 'ETC': 'ETC', 'ETH': 'ETH', 'EUR': 'EUR', 'FARM': 'FARM', 'FET': 'FET', 'FIDA': 'FIDA', 'FIL': 'FIL', 'FIO': 'FIO', 'FIRO': 'FIRO', 'FIS': 'FIS', 'FLM': 'FLM', 'FLOW': 'FLOW', 'FLUX': 'FLUX', 'FOR': 'FOR', 'FORTH': 'FORTH', 'FRONT':'FRONT', 'FTM': 'FTM', 'FTT': 'FTT', 'FUN': 'FUN', 'FXS': 'FXS', 'GAL': 'GAL', 'GALA': 'GALA', 'GBP': 'GBP', 'GHST': 'GHST', 'GLMR': 'GLMR', 'GMT': 'GMT', 'GNO': 'GNO', 'GRT': 'GRT', 'GTC': 'GTC', 'GTO': 'GTO', 'GXS': 'GXS', 'HARD': 'HARD', 'HBAR': 'HBAR', 'HC': 'HC', 'HIGH': 'HIGH', 'HIVE': 'HIVE', 'HNT': 'HNT', 'HOT': 'HOT', 'ICP': 'ICP', 'ICX': 'ICX', 'IDEX': 'IDEX', 'ILV': 'ILV', 'IMX': 'IMX', 'INJ': 'INJ', 'IOST': 'IOST', 'IOTA': 'IOTA', 'IOTX': 'IOTX', 'IRIS': 'IRIS', 'JASMY': 'JASMY', 'JOE': 'JOE', 'JST': 'JST', 'JUV': 'JUV', 'KAVA': 'KAVA', 'KDA': 'KDA', 'KEEP': 'KEEP', 'KEY': 'KEY', 'KLAY': 'KLAY', 'KMD': 'KMD', 'KNC': 'KNC', 'KP3R': 'KP3R', 'KSM': 'KSM', 'LAZIO': 'LAZIO', 'LDO': 'LDO', 'LEND': 'LEND', 'LINA': 'LINA', 'LINK': 'LINK', 'LIT': 'LIT', 'LOKA': 'LOKA', 'LPT': 'LPT', 'LRC': 'LRC', 'LSK': 'LSK', 'LTC': 'LTC', 'LTO': 'LTO', 'LUNA': 'LUNA', 'MANA': 'MANA', 'MASK': 'MASK', 'MATIC': 'MATIC', 'MBL': 'MBL', 'MBOX': 'MBOX', 'MC': 'MC', 'MCO': 'MCO', 'MDT': 'MDT', 'MDX': 'MDX', 'MFT': 'MFT', 'MINA': 'MINA', 'MIR': 'MIR', 'MITH': 'MITH', 'MKR': 'MKR', 'MLN': 'MLN', 'MOB': 'MOB', 'MOVR': 'MOVR', 'MTL': 'MTL', 'MULTI': 'MULTI', 'NANO': 'NANO', 'NBS': 'NBS', 'NBT': 'NBT', 'NEAR': 'NEAR', 'NEO': 'NEO', 'NEXO': 'NEXO', 'NKN': 'NKN', 'NMR': 'NMR', 'NPXS': 'NPXS', 'NU': 'NU', 'NULS': 'NULS', 'OCEAN': 'OCEAN', 'OG': 'OG', 'OGN': 'OGN', 'OM': 'OM', 'OMG': 'OMG', 'ONE': 'ONE', 'ONG': 'ONG', 'ONT': 'ONT', 'OOKI': 'OOKI', 'OP': 'OP', 'ORN': 'ORN', 'OXT': 'OXT', 'PAX': 'PAX', 'PAXG': 'PAXG', 'PEOPLE': 'PEOPLE', 'PERL': 'PERL', 'PERP': 'PERP', 'PHA': 'PHA', 'PLA': 'PLA', 'PNT': 'PNT', 'POLS': 'POLS', 'POLY': 'POLY', 'POND': 'POND', 'PORTO': 'PORTO', 'POWR': 'POWR', 'PSG': 'PSG', 'PUNDIX': 'PUNDIX', 'PYR': 'PYR', 'QI': 'QI', 'QNT': 'QNT', 'QTUM': 'QTUM', 'QUICK': 'QUICK', 'RAD': 'RAD', 'RAMP': 'RAMP', 'RARE': 'RARE', 'RAY': 'RAY', 'REEF': 'REEF', 'REI': 'REI', 'REN': 'REN', 'REP': 'REP', 'REQ': 'REQ', 'RGT': 'RGT', 'RIF': 'RIF', 'RLC': 'RLC', 'RNDR': 'RNDR', 'ROSE': 'ROSE', 'RSR': 'RSR', 'RUNE': 'RUNE', 'RVN': 'RVN', 'SAND': 'SAND', 'SANTOS': 'SANTOS', 'SC': 'SC', 'SCRT': 'SCRT', 'SFP': 'SFP', 'SHIB': 'SHIB', 'SKL': 'SKL', 'SLP': 'SLP', 'SNX': 'SNX', 'SOL': 'SOL', 'SPELL': 'SPELL', 'SRM': 'SRM', 'STEEM': 'STEEM', 'STMX': 'STMX', 'STORJ': 'STORJ', 'STORM': 'STORM', 'STPT': 'STPT', 'STRAT': 'STRAT', 'STRAX': 'STRAX', 'STX': 'STX', 'SUN': 'SUN', 'SUPER': 'SUPER', 'SUSD': 'SUSD',
+                'SUSHI': 'SUSHI', 'SXP': 'SXP', 'SYS': 'SYS', 'T': 'T', 'TCT': 'TCT', 'TFUEL': 'TFUEL', 'THETA': 'THETA', 'TKO': 'TKO', 'TLM': 'TLM', 'TOMO': 'TOMO', 'TORN': 'TORN', 'TRB': 'TRB', 'TRIBE': 'TRIBE', 'TROY': 'TROY', 'TRU': 'TRU', 'TRX': 'TRX', 'TUSD': 'TUSD', 'TVK': 'TVK', 'TWT': 'TWT', 'UMA': 'UMA', 'UNFI': 'UNFI', 'UNI': 'UNI', 'USDC': 'USDC', 'USDP': 'USDP', 'USDS': 'USDS', 'USDSB': 'USDSB', 'UST': 'UST', 'UTK': 'UTK', 'VEN': 'VEN', 'VET': 'VET', 'VGX': 'VGX', 'VIDT': 'VIDT', 'VITE': 'VITE', 'VOXEL': 'VOXEL', 'VTHO': 'VTHO', 'WAN': 'WAN', 'WAVES': 'WAVES', 'WAXP': 'WAXP', 'WIN': 'WIN', 'WING': 'WING', 'WNXM': 'WNXM', 'WOO': 'WOO', 'WRX': 'WRX', 'WTC': 'WTC', 'XEC': 'XEC', 'XEM': 'XEM', 'XLM': 'XLM', 'XMR': 'XMR', 'XNO': 'XNO', 'XRP': 'XRP', 'XTZ': 'XTZ', 'XVG': 'XVG', 'XVS': 'XVS', 'XZC': 'XZC', 'YFI': 'YFI', 'YFII': 'YFII', 'YGG': 'YGG', 'ZEC': 'ZEC', 'ZEN': 'ZEN', 'ZIL': 'ZIL', 'ZRX': 'ZRX'
+              }"
+            ></formulate-input>
+            <formulate-input name="base" placeholder="ex. BTC" type="select" label="Base for BUSD" validation="required"
+              v-if="values.quote === 'BUSD'"
+              key="BUSD"
+              :options="{'1INCH': '1INCH', 'AAVE': 'AAVE', 'ACA': 'ACA', 'ACH': 'ACH', 'ACM': 'ACM', 'ADA': 'ADA', 'ADX': 'ADX', 'AERGO': 'AERGO', 'AGLD': 'AGLD', 'AION': 'AION', 'AKRO': 'AKRO', 'ALCX': 'ALCX', 'ALGO': 'ALGO', 'ALICE': 'ALICE', 'ALPACA': 'ALPACA', 'ALPHA': 'ALPHA', 'ALPINE': 'ALPINE', 'AMP': 'AMP', 'ANC': 'ANC', 'ANKR': 'ANKR', 'ANT': 'ANT', 'ANY': 'ANY', 'APE': 'APE', 'API3': 'API3', 'AR': 'AR', 'ARPA': 'ARPA', 'ASR': 'ASR', 'ASTR': 'ASTR', 'ATA': 'ATA', 'ATM': 'ATM', 'ATOM': 'ATOM', 'AUCTION': 'AUCTION', 'AUD': 'AUD', 'AUDIO': 'AUDIO', 'AUTO': 'AUTO', 'AVA': 'AVA', 'AVAX': 'AVAX', 'AXS': 'AXS', 'BADGER': 'BADGER', 'BAKE': 'BAKE', 'BAL': 'BAL', 'BAND': 'BAND', 'BAR': 'BAR', 'BAT': 'BAT', 'BCH': 'BCH', 'BCHA': 'BCHA', 'BEL': 'BEL', 'BETA': 'BETA', 'BICO': 'BICO', 'BIFI': 'BIFI', 'BKRW': 'BKRW', 'BLZ': 'BLZ', 'BNB': 'BNB', 'BNT': 'BNT', 'BNX': 'BNX', 'BOND': 'BOND', 'BOT': 'BOT', 'BSW': 'BSW', 'BTC': 'BTC', 'BTCST': 'BTCST', 'BTG': 'BTG', 'BTS': 'BTS', 'BTT': 'BTT', 'BTTC': 'BTTC', 'BURGER': 'BURGER', 'BZRX': 'BZRX', 'C98': 'C98', 'CAKE': 'CAKE', 'CELO': 'CELO', 
+              'CELR': 'CELR', 'CFX': 'CFX', 'CHESS': 'CHESS', 'CHR': 'CHR', 'CHZ': 'CHZ', 'CITY': 'CITY', 'CKB': 'CKB', 'CLV': 'CLV', 'COCOS': 'COCOS', 'COMP': 'COMP', 'COS': 'COS', 'COTI': 'COTI', 'COVER': 'COVER', 'CREAM': 'CREAM', 'CRV': 'CRV', 'CTK': 'CTK', 'CTSI': 'CTSI', 'CTXC': 'CTXC', 'CVC': 'CVC', 'CVP': 'CVP', 'CVX': 'CVX', 'DAI': 'DAI', 'DAR': 'DAR', 'DASH': 'DASH', 'DATA': 'DATA', 'DCR': 'DCR', 'DEGO': 'DEGO', 'DENT': 'DENT', 'DEXE': 'DEXE', 'DF': 'DF', 'DGB': 'DGB', 'DIA': 'DIA', 'DNT': 'DNT', 'DOCK': 'DOCK', 'DODO': 'DODO', 'DOGE': 'DOGE', 'DOT': 'DOT', 'DREP': 'DREP', 'DUSK': 'DUSK', 'DYDX': 'DYDX', 'EGLD': 'EGLD', 'ELF': 'ELF', 'ENJ': 'ENJ', 'ENS': 'ENS', 'EOS': 'EOS', 'EPS': 'EPS', 'EPX': 'EPX', 'ERD': 'ERD', 'ERN': 'ERN', 'ETC': 'ETC', 'ETH': 'ETH', 'EUR': 'EUR', 'FARM': 'FARM', 'FET': 'FET', 'FIDA': 'FIDA', 'FIL': 'FIL', 'FIO': 'FIO', 'FIRO': 'FIRO', 'FIS': 'FIS', 'FLM': 'FLM', 'FLOW': 'FLOW', 'FLUX': 'FLUX', 'FOR': 'FOR', 'FORTH': 'FORTH', 'FRONT': 'FRONT', 'FTM': 'FTM', 'FTT': 'FTT', 'FXS': 'FXS', 'GAL': 'GAL', 'GALA': 'GALA', 'GBP': 'GBP', 'GHST': 'GHST', 'GLMR': 'GLMR', 'GMT': 'GMT', 'GNO': 'GNO', 'GRT': 'GRT', 'GTC': 'GTC', 'GTO': 'GTO', 'HARD': 'HARD', 'HBAR': 'HBAR', 'HEGIC': 'HEGIC', 'HIGH': 
+              'HIGH', 'HIVE': 'HIVE', 'HNT': 'HNT', 'HOT': 'HOT', 'ICP': 'ICP', 'ICX': 'ICX', 'IDEX': 'IDEX', 'ILV': 'ILV', 'IMX': 'IMX', 'INJ': 'INJ', 'IOST': 'IOST', 'IOTA': 'IOTA', 'IOTX': 'IOTX', 'IQ': 'IQ', 'IRIS': 'IRIS', 'JASMY': 'JASMY', 'JOE': 'JOE', 'JST': 'JST', 'JUV': 'JUV', 'KAVA': 'KAVA', 'KDA': 'KDA', 'KEEP': 'KEEP', 'KEY': 'KEY', 'KLAY': 'KLAY', 'KMD': 'KMD', 'KNC': 'KNC', 'KP3R': 'KP3R', 'KSM': 'KSM', 'LAZIO': 'LAZIO', 'LDO': 'LDO', 'LEND': 'LEND', 'LINA': 'LINA', 'LINK': 'LINK', 'LIT': 'LIT', 'LOKA': 'LOKA', 'LPT': 'LPT', 'LRC': 'LRC', 'LSK': 'LSK', 'LTC': 'LTC', 'LTO': 'LTO', 'LUNA': 'LUNA', 'LUNC': 
+              'LUNC', 'MANA': 'MANA', 'MASK': 'MASK', 'MATIC': 'MATIC', 'MBL': 'MBL', 'MBOX': 'MBOX', 'MC': 'MC', 'MDT': 'MDT', 'MDX': 'MDX', 'MINA': 'MINA', 'MIR': 'MIR', 'MKR': 'MKR', 'MLN': 'MLN', 'MOB': 'MOB', 'MOVR': 'MOVR', 'MTL': 'MTL', 'MULTI': 'MULTI', 'NANO': 'NANO', 'NEAR': 'NEAR', 'NEO': 'NEO', 'NEXO': 'NEXO', 'NKN': 'NKN', 'NMR': 'NMR', 'NU': 'NU', 'NULS': 'NULS', 'OCEAN': 'OCEAN', 'OG': 'OG', 'OGN': 'OGN', 'OM': 'OM', 'OMG': 'OMG', 'ONE': 'ONE', 'ONT': 'ONT', 'OOKI': 'OOKI', 'OP': 'OP', 'ORN': 'ORN', 'OXT': 'OXT', 'PAX': 'PAX', 'PAXG': 'PAXG', 'PEOPLE': 'PEOPLE', 'PERP': 'PERP', 'PHA': 'PHA', 'PLA': 'PLA', 'POLS': 'POLS', 'POLY': 'POLY', 'POND': 'POND', 'PORTO': 'PORTO', 'POWR': 'POWR', 'PROM': 'PROM', 'PSG': 'PSG', 'PUNDIX': 'PUNDIX', 'PYR': 'PYR', 'QI': 'QI', 'QNT': 'QNT', 'QTUM': 'QTUM', 'QUICK': 'QUICK', 'RAD': 'RAD', 'RAMP': 'RAMP', 'RARE': 'RARE', 'RAY': 'RAY', 'REEF': 'REEF', 'REI': 'REI', 'REN': 'REN', 'REP': 'REP', 'REQ': 'REQ', 'RGT': 'RGT', 'RLC': 'RLC', 'RNDR': 'RNDR', 'ROSE': 'ROSE', 'RSR': 'RSR', 'RUNE': 'RUNE', 'RVN': 'RVN', 'SAND': 'SAND', 'SANTOS': 'SANTOS', 'SC': 'SC', 'SCRT': 'SCRT', 'SFP': 'SFP', 'SHIB': 'SHIB', 'SKL': 'SKL', 'SLP': 'SLP', 'SNX': 'SNX', 'SOL': 'SOL', 'SPELL': 'SPELL', 
+              'SRM': 'SRM', 'STEEM': 'STEEM', 'STMX': 'STMX', 'STORJ': 'STORJ', 'STPT': 'STPT', 'STRAT': 'STRAT', 'STRAX': 'STRAX', 'STX': 'STX', 'SUN': 'SUN', 'SUPER': 'SUPER', 'SUSHI': 'SUSHI', 'SWRV': 'SWRV', 'SXP': 'SXP', 'SYS': 'SYS', 'T': 'T', 'TFUEL': 'TFUEL', 'THETA': 'THETA', 'TKO': 'TKO', 'TLM': 'TLM', 'TOMO': 'TOMO', 'TORN': 'TORN', 'TRB': 'TRB', 'TRIBE': 'TRIBE', 'TROY': 'TROY', 'TRU': 'TRU', 'TRX': 'TRX', 'TUSD': 'TUSD', 'TVK': 'TVK', 'TWT': 'TWT', 'UFT': 
+              'UFT', 'UMA': 'UMA', 'UNFI': 'UNFI', 'UNI': 'UNI', 'USDC': 'USDC', 'USDP': 'USDP', 'UST': 'UST', 'USTC': 'USTC', 'UTK': 'UTK', 'VET': 'VET', 'VIDT': 'VIDT', 'VOXEL': 'VOXEL', 'VTHO': 'VTHO', 'WAVES': 'WAVES', 'WAXP': 'WAXP', 'WBTC': 'WBTC', 'WIN': 'WIN', 'WING': 'WING', 'WNXM': 'WNXM', 'WOO': 'WOO', 'WRX': 'WRX', 'XEC': 'XEC', 'XEM': 'XEM', 'XLM': 'XLM', 'XMR': 'XMR', 'XNO': 'XNO', 'XRP': 'XRP', 'XTZ': 'XTZ', 'XVG': 'XVG', 'XVS': 'XVS', 'YFI': 'YFI', 'YFII': 'YFII', 'YGG': 'YGG', 'ZEC': 'ZEC', 'ZEN': 'ZEN', 'ZIL': 'ZIL', 'ZRX': 'ZRX'}"
+            ></formulate-input>
+
+
+
+
+          
+          
+        </div>
+        <formulate-input type="group" name="orders" label="Create your custom order"
+          help="Choose your cryptocurrencies, set your entering, exit and stoploss .." add-label="+ more orders"
+          validation="required" :repeatable="true">
+          <div class="orderfields">
+            <formulate-input name="amount" placeholder="ex. 50" label="Amount" type="number" min="1"
+              validation="required|min:1"></formulate-input>
+            <formulate-input name="buy_price" placeholder="ex. 1250" label="Buy at" type="text"
+              validation="required|number"></formulate-input>
+          </div>
+          <div class="orderfields">
+            <formulate-input name="sell_price" placeholder="ex. 1350" label="Sell at" type="text"
+              validation="required|number"></formulate-input>
+            <formulate-input name="stop_loss" placeholder="ex. 1150" label="stop loss" type="text"
+              validation="required|number"></formulate-input>
+          </div>
+        </formulate-input>
+        <div class="orderfields">
+          <formulate-input type="submit" value="Place Order"></formulate-input>
+          <formulate-input type="button" label="Reset" data-ghost @click="reset"></formulate-input>
+          <formulate-input type="button" label="your open orders" data-ghost @click="redirect"></formulate-input>
+        </div>
+      </formulate-form>
+      <!-- <pre>[[values]]</pre> -->
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@braid/vue-formulate@2.3.8/dist/formulate.min.js"></script>
+  <script src="{{ url_for('static', filename='index.js') }}"></script>
+  <style>
+  .outtercontainer {
+    max-width: 600px;
+    margin: 30px auto;
+    overflow: auto;
+    min-height: 300px;
+    border: 1px solid rgb(94, 207, 145);
+    padding: 30px;
+    border-radius: 5px;
+  }
+  
+  .orderfields {
+    display: flex;
+  }
+  
+  .orderfields .formulate-input {        margin-right: 1.5em;
+        }
+      
+  </style>
+</body>
+
+</html>

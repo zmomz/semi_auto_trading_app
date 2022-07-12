@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="description" content="Vue-Formulate example">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Register</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>
+
+<body>
+  <div class="outtercontainer">
+    <div id="app">
+        <div class="orderfields">
+            <template>
+                <!-- some code condensed for display reasons -->
+                <formulate-form
+                  v-model="values"
+                  @submit="submitHandler"
+                >
+                  <h2>Register</h2>
+                  <formulate-input type="text" name="username" label="User Name" validation="required" ></formulate-input>
+                  <formulate-input type="text" name="password" label="Password" validation="required" ></formulate-input>
+                  <formulate-input type="submit" label="Register" ></formulate-input>
+                  <pre>[[ values ]]</pre>
+                </formulate-form>
+              </template>
+        </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@braid/vue-formulate@2.3.8/dist/formulate.min.js"></script>
+  <script src="{{ url_for('static', filename='register.js') }}"></script>
+  <style>
+  .outtercontainer {
+    max-width: 600px;
+    margin: 30px auto;
+    overflow: auto;
+    min-height: 300px;
+    border: 1px solid rgb(94, 207, 145);
+    padding: 30px;
+    border-radius: 5px;
+  }
+  
+  .btn-in-table {
+    display: inline-block;
+  }
+  
+  .orderfields .formulate-input {        
+    margin-right: 1.5em;
+        }
+    span.sr-only {
+        display: none;
+    }
+      
+  </style>
+</body>
+
+</html>
