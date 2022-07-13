@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template, abort, url_for, g
 from flask_cors import CORS,cross_origin
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy as db
 from flask_marshmallow import Marshmallow
 from flask_httpauth import HTTPBasicAuth
 import os
@@ -20,11 +20,10 @@ app.config['SECRET_KEY'] = config.PASSPHRASE
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = config.DatabaseURL
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 
-db = SQLAlchemy(app)
-# engine = db.create_engine('postgresql://me@localhost/mydb',pool_size=20, max_overflow=0)
+
+engine = db.create_engine(config.DatabaseURL,pool_size=20, max_overflow=0)
+connection = engine.connet()
 auth = HTTPBasicAuth()
 ma = Marshmallow(app)
 
@@ -505,5 +504,4 @@ def cancel_order_request_and_sell_market():
 
 # Start the app
 if __name__ == '__main__':
-    db.create_all()
-    app.run(port=5000)
+    app.run()
