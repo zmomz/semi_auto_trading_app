@@ -504,6 +504,5 @@ def cancel_order_request_and_sell_market():
 
 # Start the app
 if __name__ == '__main__':
-    if not os.path.exists('db.sqlite'):
-        db.create_all()
+    db.create_all()
     app.run(threaded=True, port=5000)
