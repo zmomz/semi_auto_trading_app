@@ -21,8 +21,7 @@ app.config['SECRET_KEY'] = config.PASSPHRASE
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = config.DatabaseURL
 
-
-engine = db.create_engine(config.DatabaseURL,pool_size=20, max_overflow=0)
+engine = db.create_engine(config.DatabaseURL,engine_opts={'pool_size':20,'max_overflow':0})
 connection = engine.connet()
 auth = HTTPBasicAuth()
 ma = Marshmallow(app)
