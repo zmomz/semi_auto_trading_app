@@ -505,4 +505,4 @@ def cancel_order_request_and_sell_market():
 # Start the app
 if __name__ == '__main__':
     db.create_all()
-    app.run(threaded=True, port=5000)
+    app.run(port=5000)
