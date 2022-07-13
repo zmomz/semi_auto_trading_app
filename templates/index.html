@@ -23,6 +23,12 @@
 
             <formulate-input name="quote" placeholder="ex. USDT" type="select" label="Quote" validation="required"
             :options="{ USDT: 'USDT', BUSD: 'BUSD' }"></formulate-input>
+          </div>
+
+          <formulate-input type="group" name="orders" label="Create your custom order"
+          help="Choose your cryptocurrencies, set your entering, exit and stoploss .." add-label="+ more orders"
+          validation="required" :repeatable="true">
+          <div class="orderfields">
 
             <formulate-input name="base" placeholder="ex. BTC" type="select" label="Base for USDT" validation="required"
               v-if="values.quote === 'USDT'"
@@ -42,18 +48,8 @@
               'LUNC', 'MANA': 'MANA', 'MASK': 'MASK', 'MATIC': 'MATIC', 'MBL': 'MBL', 'MBOX': 'MBOX', 'MC': 'MC', 'MDT': 'MDT', 'MDX': 'MDX', 'MINA': 'MINA', 'MIR': 'MIR', 'MKR': 'MKR', 'MLN': 'MLN', 'MOB': 'MOB', 'MOVR': 'MOVR', 'MTL': 'MTL', 'MULTI': 'MULTI', 'NANO': 'NANO', 'NEAR': 'NEAR', 'NEO': 'NEO', 'NEXO': 'NEXO', 'NKN': 'NKN', 'NMR': 'NMR', 'NU': 'NU', 'NULS': 'NULS', 'OCEAN': 'OCEAN', 'OG': 'OG', 'OGN': 'OGN', 'OM': 'OM', 'OMG': 'OMG', 'ONE': 'ONE', 'ONT': 'ONT', 'OOKI': 'OOKI', 'OP': 'OP', 'ORN': 'ORN', 'OXT': 'OXT', 'PAX': 'PAX', 'PAXG': 'PAXG', 'PEOPLE': 'PEOPLE', 'PERP': 'PERP', 'PHA': 'PHA', 'PLA': 'PLA', 'POLS': 'POLS', 'POLY': 'POLY', 'POND': 'POND', 'PORTO': 'PORTO', 'POWR': 'POWR', 'PROM': 'PROM', 'PSG': 'PSG', 'PUNDIX': 'PUNDIX', 'PYR': 'PYR', 'QI': 'QI', 'QNT': 'QNT', 'QTUM': 'QTUM', 'QUICK': 'QUICK', 'RAD': 'RAD', 'RAMP': 'RAMP', 'RARE': 'RARE', 'RAY': 'RAY', 'REEF': 'REEF', 'REI': 'REI', 'REN': 'REN', 'REP': 'REP', 'REQ': 'REQ', 'RGT': 'RGT', 'RLC': 'RLC', 'RNDR': 'RNDR', 'ROSE': 'ROSE', 'RSR': 'RSR', 'RUNE': 'RUNE', 'RVN': 'RVN', 'SAND': 'SAND', 'SANTOS': 'SANTOS', 'SC': 'SC', 'SCRT': 'SCRT', 'SFP': 'SFP', 'SHIB': 'SHIB', 'SKL': 'SKL', 'SLP': 'SLP', 'SNX': 'SNX', 'SOL': 'SOL', 'SPELL': 'SPELL', 
               'SRM': 'SRM', 'STEEM': 'STEEM', 'STMX': 'STMX', 'STORJ': 'STORJ', 'STPT': 'STPT', 'STRAT': 'STRAT', 'STRAX': 'STRAX', 'STX': 'STX', 'SUN': 'SUN', 'SUPER': 'SUPER', 'SUSHI': 'SUSHI', 'SWRV': 'SWRV', 'SXP': 'SXP', 'SYS': 'SYS', 'T': 'T', 'TFUEL': 'TFUEL', 'THETA': 'THETA', 'TKO': 'TKO', 'TLM': 'TLM', 'TOMO': 'TOMO', 'TORN': 'TORN', 'TRB': 'TRB', 'TRIBE': 'TRIBE', 'TROY': 'TROY', 'TRU': 'TRU', 'TRX': 'TRX', 'TUSD': 'TUSD', 'TVK': 'TVK', 'TWT': 'TWT', 'UFT': 
               'UFT', 'UMA': 'UMA', 'UNFI': 'UNFI', 'UNI': 'UNI', 'USDC': 'USDC', 'USDP': 'USDP', 'UST': 'UST', 'USTC': 'USTC', 'UTK': 'UTK', 'VET': 'VET', 'VIDT': 'VIDT', 'VOXEL': 'VOXEL', 'VTHO': 'VTHO', 'WAVES': 'WAVES', 'WAXP': 'WAXP', 'WBTC': 'WBTC', 'WIN': 'WIN', 'WING': 'WING', 'WNXM': 'WNXM', 'WOO': 'WOO', 'WRX': 'WRX', 'XEC': 'XEC', 'XEM': 'XEM', 'XLM': 'XLM', 'XMR': 'XMR', 'XNO': 'XNO', 'XRP': 'XRP', 'XTZ': 'XTZ', 'XVG': 'XVG', 'XVS': 'XVS', 'YFI': 'YFI', 'YFII': 'YFII', 'YGG': 'YGG', 'ZEC': 'ZEC', 'ZEN': 'ZEN', 'ZIL': 'ZIL', 'ZRX': 'ZRX'}"
-            ></formulate-input>
+            ></formulate-input>          
 
-
-
-
-          
-          
-        </div>
-        <formulate-input type="group" name="orders" label="Create your custom order"
-          help="Choose your cryptocurrencies, set your entering, exit and stoploss .." add-label="+ more orders"
-          validation="required" :repeatable="true">
-          <div class="orderfields">
             <formulate-input name="amount" placeholder="ex. 50" label="Amount" type="number" min="1"
               validation="required|min:1"></formulate-input>
             <formulate-input name="buy_price" placeholder="ex. 1250" label="Buy at" type="text"
