@@ -394,8 +394,8 @@ def render_home_page():
 def send_buy_orders():
     requested_orders =request.get_json(silent=True)
     for order in requested_orders['orders']:
-        base = requested_orders['base']
         quote = requested_orders['quote']
+        base = order['base']
         amount = float(order['amount'])
         buy_price= float(order['buy_price'])
         sell_price = float(order['sell_price'])
