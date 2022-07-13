@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template, abort, url_for, g
 from flask_cors import CORS,cross_origin
-from flask_sqlalchemy import SQLAlchemy as db
+from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_httpauth import HTTPBasicAuth
 import os
@@ -14,15 +14,13 @@ import config
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config.PASSPHRASE
 
-
 ##################################################### DB CONFIG #####################################################
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = config.DatabaseURL
+db = SQLAlchemy(app,engine_options={'pool_size':20,'max_overflow':0})
 
-engine = db.create_engine(sa_url=config.DatabaseURL,engine_opts={'pool_size':20,'max_overflow':0})
-connection = engine.connet()
 auth = HTTPBasicAuth()
 ma = Marshmallow(app)
 
