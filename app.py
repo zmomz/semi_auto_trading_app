@@ -24,6 +24,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 
 db = SQLAlchemy(app)
+# engine = db.create_engine('postgresql://me@localhost/mydb',pool_size=20, max_overflow=0)
 auth = HTTPBasicAuth()
 ma = Marshmallow(app)
 
