@@ -14,13 +14,16 @@ import config
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config.PASSPHRASE
 
+
 ##################################################### DB CONFIG #####################################################
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = config.DatabaseURL
-db = SQLAlchemy(app,engine_options={'pool_size':20,'max_overflow':0})
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 
+db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
 ma = Marshmallow(app)
 
@@ -501,4 +504,6 @@ def cancel_order_request_and_sell_market():
 
 # Start the app
 if __name__ == '__main__':
-    app.run()
+    if not os.path.exists('db.sqlite'):
+        db.create_all()
+    app.run(threaded=True, port=5000)
