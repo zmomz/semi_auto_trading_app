@@ -683,11 +683,10 @@ def vue_all_paused():
 @auth.login_required
 @cross_origin(origin='*',headers=['Content-Type'])
 def activate_paused_orders():
-    
-    # status = resume()
-    # if status:
-    #     db.session.query(Pause).delete()
-    #     db.session.commit()
+    status = resume()
+    if status:
+        db.session.query(Pause).delete()
+        db.session.commit()
     return 'status' 
 
 
