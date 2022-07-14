@@ -170,7 +170,7 @@ class Pause(db.Model):
     amount = db.Column(db.Float(), nullable=False)
     price = db.Column(db.Float(), nullable=False)
     stopPrice = db.Column(db.Float(), default=0, nullable=False)
-    old_id = db.Column(db.Integer)
+    old_id = db.Column(db.String, default="0", nullable=False)
 
     def __init__(self,symbol,side,type,amount,price,stopPrice,old_id):
         # Add the data to the instance
