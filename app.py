@@ -6,7 +6,12 @@ from flask_httpauth import HTTPBasicAuth
 import os
 import time
 import jwt
+import sqlalchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from alembic import op
+
+
+op.alter_column(table_name='pause',column_name='old_id',existing_type=sqlalchemy.types.VARCHAR)
 
 import config
 # exchange = config.
@@ -239,8 +244,6 @@ def add_pause_to_db(symbol, side, type, amount, price, stopPrice, old_id):
     # Save the pause in the db
     db.session.add(new_pause)
     db.session.commit()
-
-
 
 
 ########################
