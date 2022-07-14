@@ -10,3 +10,4 @@ exchange = binance({
    "secret": API_SECRET,
    "enableRateLimit": True,
 })
+

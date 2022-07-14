@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title>Open orders</title>
+  <title>Paused orders</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0-beta1/css/bootstrap.min.css" integrity="sha512-o/MhoRPVLExxZjCFVBsm17Pkztkzmh7Dp8k7/3JrtNCHh0AQ489kwpfA3dPSHzKDe8YCuEhxXq3Y71eb/o6amg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.22.0/bootstrap-vue.min.css" integrity="sha512-YUqiEWiqDbBHeBWsrh+VDjFU6cMhVVmgjpBaoDhjMDhsfmfKVuU68KC0bFjWCgyD8B4LbcNc2p+1+NFtdYU9bw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
@@ -17,46 +17,23 @@
     <div id="app">
         <template>
           <div>
-            <b-button size="sm" class="btn"  variant="outline-success" @click="redirect_new">new orders</b-button>
-            <b-button size="sm" class="btn"  variant="outline-success" @click="redirect_pause">paused orders</b-button>
-          </div>
-          <div>
-            <small>
-              actions: <br>
-            </small>
-            <ul>
-              <li>
-            <span><small>X : Cancel the order. </small></span>
-
-              </li>
-              <li>
-            <span><small>$ : Cancel the order and sell the amount market.</small></span>
-
-              </li>
-            </ul>
-
-
+            <b-button size="sm" class="btn"  variant="success" @click="redirect_new">new orders</b-button>
+            <b-button size="sm" class="btn"  variant="success" @click="redirect_open">open orders</b-button>
           </div>
 
             <div>
               <b-table :items="items"  :fields="fields" :tbody-tr-class="rowClass">
-                <template #cell(actions)="data">
-                    <p class="btn-in-table">
-                        <b-button size="sm" class="btn"  variant="outline-danger" @click="cancel(items[data.index].id, items[data.index].symbol)">X</b-button>
-                        <b-button size="sm" class="btn" v-if="items[data.index].type !== 'limit buy'" variant="outline-success" @click="cancel_market(items[data.index].id, items[data.index].symbol)">$</b-button>
-                    </p>
-                  </template>
               </b-table>
             </div>
         </template>
         <div class="orderfields">
-        <b-button variant="outline-warning"@click="pause_all">Pause All</b-button>
+          <b-button variant="outline-info"@click="activate_orders">activate</b-button>
         </div>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.22.0/bootstrap-vue.min.js" integrity="sha512-fpl6VxrVL83pzi0dMBPknsykT+mf3+TLzBigOtNKp1cPi2oEpooeOzTb+tOku1YhL7/0eDfe9nnzCPzuAwvtog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+  <script src="{{ url_for('static', filename='pause.js') }}"></script>
   <style>
   .outtercontainer {
     max-width: 600px;

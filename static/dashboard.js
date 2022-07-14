@@ -19,9 +19,12 @@ new Vue({
             if (!item || type !== 'row') return
             if (item.type === "limit buy") return 'table-success'
         },
-        redirect(){
+        redirect_new(){
             window.location.href = '/'
-          }
+          },
+        redirect_pause(){
+            window.location.href = '/paused'
+        }
         ,
         async cancel(id, pair) {
             const res = await fetch('/trades/cancel', {
@@ -40,7 +43,16 @@ new Vue({
                 },
                 body: JSON.stringify({ id: id, symbol: pair })
             }).then(location.reload())
-        }
+        },
+        async pause_all() {
+            const res = await fetch('/trades/pause', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json',
+                },
+                body: JSON.stringify(this.items)
+            }).then(location.reload())
+        },
     },
     created: async function () {
         createddata = await this.loadData()

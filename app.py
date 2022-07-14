@@ -7,8 +7,10 @@ import os
 import time
 import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
-import config
 
+import config
+# exchange = config.exchange
+# exchange.set_sandbox_mode(True)
 ## Init app
 
 app = Flask(__name__)
@@ -126,15 +128,15 @@ def get_resource():
 
 class Trade(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    buy_order_id = db.Column(db.String, default="0", nullable=False)
+    sell_order_id = db.Column(db.String, default="0", nullable=False)
+    stop_order_id = db.Column(db.String, default="0", nullable=False)
     base = db.Column(db.String(50), nullable=False)
     quote = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Float(), nullable=False)
     buy_price = db.Column(db.Float(), nullable=False)
-    buy_order_id = db.Column(db.String, default="0", nullable=False)
     sell_price = db.Column(db.Float(), nullable=False)
-    sell_order_id = db.Column(db.String, default="0", nullable=False)
     stop_loss = db.Column(db.Float(), nullable=False)
-    stop_order_id = db.Column(db.String, default="0", nullable=False)
     buy_filled = db.Column(db.Boolean, default=False, nullable=False)
     sell_filled = db.Column(db.Boolean, default=False, nullable=False)
     stop_filled = db.Column(db.Boolean, default=False, nullable=False)
@@ -143,11 +145,11 @@ class Trade(db.Model):
         # Add the data to the instance
         self.base = base
         self.quote = quote
+        self.buy_order_id = buy_order_id
         self.amount = amount
         self.buy_price= buy_price
         self.sell_price = sell_price
         self.stop_loss = stop_loss
-        self.buy_order_id = buy_order_id
 
 class TradeSchema(ma.Schema):
     class Meta:
@@ -155,6 +157,37 @@ class TradeSchema(ma.Schema):
 
 trade_schema = TradeSchema()
 trades_schema = TradeSchema(many=True)
+
+##################################################### pause module #################################################
+
+
+class Pause(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    symbol = db.Column(db.String(50), nullable=False)
+    side = db.Column(db.String(50), nullable=False)
+    type = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Float(), nullable=False)
+    price = db.Column(db.Float(), nullable=False)
+    stopPrice = db.Column(db.Float(), default=0, nullable=False)
+    old_id = db.Column(db.Integer)
+
+    def __init__(self,symbol,side,type,amount,price,stopPrice,old_id):
+        # Add the data to the instance
+        self.symbol = symbol
+        self.side = side
+        self.type= type
+        self.amount = amount
+        self.price = price
+        self.stopPrice =stopPrice
+        self.old_id = old_id
+
+class PauseSchema(ma.Schema):
+    class Meta:
+        fields = ('id','symbol', 'side','type','amount','price','stopPrice','old_id')
+
+pause_schema = PauseSchema()
+pauses_schema = PauseSchema(many=True)
+
 
 ##################################################### DB Calls #####################################################
 
@@ -182,6 +215,33 @@ def fetch_trades_from_db():
     # return the trade
     return result
 
+#################
+# Get all pauses#
+#################
+
+def fetch_pauses_from_db():
+    # get the trade from db
+    all_pauses = Pause.query.all()
+    # get the trade as per the schema
+    result = pauses_schema.dump(all_pauses)
+    # return the trade
+    return result
+
+
+#################
+# new buy Pause #
+#################
+
+def add_pause_to_db(symbol, side, type, amount, price, stopPrice, old_id):  
+    # Create an instance
+    new_pause = Pause(symbol=symbol, side=side, type=type, amount=amount, price=price, stopPrice=stopPrice, old_id=old_id)
+    # Save the pause in the db
+    db.session.add(new_pause)
+    db.session.commit()
+
+
+
+
 ########################
 # getting unfilled ids #
 ########################
@@ -195,13 +255,46 @@ def fetch_unfilled_ids(side):
 
     return unfilled_orders_ids
 
+
+#########################
+# update after ids pause#
+#########################
+
+def update_buy_id_after_pause(old_id, new_id):
+    trade = Trade.query.filter(Trade.buy_order_id == old_id).first()
+    trade.buy_order_id = new_id
+    # commit to the database
+    db.session.commit()
+
+    # return the new trade as per the schema
+    return trade
+
+def update_sell_id_after_pause(old_id, new_id):
+    trade = Trade.query.filter(Trade.sell_order_id == old_id).first()
+    trade.sell_order_id = new_id
+    # commit to the database
+    db.session.commit()
+
+    # return the new trade as per the schema
+    return trade
+
+def update_stop_id_after_pause(old_id, new_id):
+    trade = Trade.query.filter(Trade.stop_order_id == old_id).first()
+    trade.stop_order_id = new_id
+    # commit to the database
+    db.session.commit()
+
+    # return the new trade as per the schema
+    return trade
+
+
 ########################
 # update limit-sell id #
 ########################
 
-def update_sell_id(trade_id, sell_id):
+def update_sell_id(trade_id, new_id):
     trade = Trade.query.get(trade_id)
-    trade.sell_order_id = sell_id
+    trade.sell_order_id = new_id
     # commit to the database
     db.session.commit()
 
@@ -213,9 +306,9 @@ def update_sell_id(trade_id, sell_id):
 ######################
 
 
-def update_stop_id(trade_id, stop_id):
+def update_stop_id(trade_id, new_id):
     trade = Trade.query.get(trade_id)
-    trade.stop_order_id = stop_id
+    trade.stop_order_id = new_id
     # commit to the database
     db.session.commit()
 
@@ -287,7 +380,6 @@ def fill_stop(stop_id):
 
 ##################################################### API CALLS #####################################################
 
-from config import exchange
 
 def create_limit_buy_order(quote_amount, buy_price, base, quote, sell_price,stop_loss):
     base_amount = quote_amount / buy_price
@@ -310,12 +402,12 @@ def check_filled_order(id,symbol):
     if id != "0":
         try:
             order = exchange.fetch_order(id,symbol)
-            if order['status'] == 'closed' or order['status'] == 'canceled':
+            if order['status'] == 'closed' :
                 print('status is closed')
                 return True
         except Exception as e:
             print("request failed, retrying",e)
-            pass
+            return False
     return False
 
 def cancel_pending_order(id,symbol):
@@ -365,6 +457,90 @@ def create_stop_order(base_amount, stop_loss, base, quote):
         order = None
 
     return order
+
+def filter_trades():
+        results = fetch_trades_from_db()
+        data=[]
+        for result in results:
+            buy ={}
+            sell ={}
+            stop={}
+            symbol = result['base'] + result['quote']
+            if result['buy_filled'] :
+                if result['sell_filled'] or result['stop_filled']:
+                    continue
+                else:
+                    if result['sell_order_id'] != '0':
+                        recored = exchange.fetch_order(id=result['sell_order_id'],symbol=symbol)
+                        if recored['status'] == 'open':
+                            sell['id']= result['sell_order_id']
+                            sell['symbol']= symbol
+                            sell['type']='limit sell'
+                            sell['price']= result['sell_price']
+                            sell['status']= f"{result['sell_filled']}"
+                            data.append(sell)
+                    
+                    if result['stop_order_id'] != '0':
+                        recored = exchange.fetch_order(id=result['stop_order_id'],symbol=symbol)
+                        if recored['status'] == 'open':
+                            stop['id']= result['stop_order_id']
+                            stop['symbol']= symbol
+                            stop['type']='stop loss'
+                            stop['price']= result['stop_loss']
+                            stop['status']= f"{result['stop_filled']}" 
+                            data.append(stop)
+            else:
+                recored = exchange.fetch_order(id=result['buy_order_id'],symbol=symbol)
+                if recored['status'] == 'open':                   
+                    buy['id']= result['buy_order_id']
+                    buy['symbol']= symbol
+                    buy['type']='limit buy'
+                    buy['price']= result['buy_price']
+                    buy['status'] = f"{result['buy_filled']}"
+                    data.append(buy)
+                
+        return {'orders':data}
+
+def pause(orders):
+    for order in orders:
+        order_data = exchange.fetch_order(order['id'],order['symbol'])
+        if order_data['status'] != 'closed':
+            id = order_data['id']
+            type = order_data['type']
+            side = order_data['side']
+            symbol = order_data['symbol']
+            price = order_data['price']
+            amount = order_data['amount']
+            stopPrice = order_data['stopPrice']
+            if id !=0:
+                exchange.cancel_order(id=id,symbol =symbol)
+            if stopPrice == None:
+                stopPrice = 0
+            add_pause_to_db(symbol=symbol, side=side, type=type, amount=amount, price=price, stopPrice=stopPrice, old_id = id)
+    return 'done'
+
+def resume():
+    orders = fetch_pauses_from_db()
+    for order in orders:
+        old_id = order['old_id']
+        try:
+            if order['type'] == 'stop_loss_limit':
+                order= exchange.create_stop_limit_order(symbol=order['symbol'],side=order['side'],amount=order['amount'], price=order['price'], stopPrice=order['stopPrice'])
+                new_id = order['id']
+                update_stop_id_after_pause(old_id=old_id, new_id=new_id)
+            elif order['type'] == 'limit' and order['side'] == 'buy' :
+                order = exchange.create_limit_order(symbol=order['symbol'], side=order['side'], amount=order['amount'], price=order['price'])
+                new_id = order['id']
+                update_buy_id_after_pause(old_id=old_id, new_id=new_id)
+            elif order['type'] == 'limit' and order['side'] == 'sell':
+                order = exchange.create_limit_order(symbol=order['symbol'], side=order['side'], amount=order['amount'], price=order['price'])
+                new_id = order['id']
+                update_sell_id_after_pause(old_id=old_id, new_id=new_id)
+        except Exception as e:
+            print(e)
+            
+    return 'done'
+
 
 
 
@@ -419,57 +595,7 @@ def get_all_trades():
 @auth.login_required
 @cross_origin(origin='*',headers=['Content-Type'])
 def vue_all_trades():
-    results = fetch_trades_from_db()
-    data=[]
-    for result in results:
-        buy ={}
-        sell ={}
-        stop={}
-        if result['buy_filled'] :
-            if result['sell_filled'] or result['stop_filled']:
-                continue
-            else:
-                sell['id']= result['sell_order_id']
-                stop['id']= result['stop_order_id']
-
-                sell['symbol']= result['base'] + result['quote']
-                stop['symbol']= result['base'] + result['quote']
-
-                sell['type']='limit sell'
-                stop['type']='stop loss'
-
-                sell['price']= result['sell_price']
-                stop['price']= result['stop_loss']
-
-                sell['status']= f"{result['sell_filled']}"
-                stop['status']= f"{result['stop_filled']}" 
-                data.append(sell)
-                data.append(stop)
-        else:                   
-            buy['id']= result['buy_order_id']
-            sell['id']= result['sell_order_id']
-            stop['id']= result['stop_order_id']
-
-            buy['symbol']= result['base'] + result['quote']
-            sell['symbol']= result['base'] + result['quote']
-            stop['symbol']= result['base'] + result['quote']
-
-            buy['type']='limit buy'
-            sell['type']='limit sell'
-            stop['type']='stop loss'
-
-            buy['price']= result['buy_price']
-            sell['price']= result['sell_price']
-            stop['price']= result['stop_loss']
-
-            buy['status'] = f"{result['buy_filled']}"
-            sell['status']= f"{result['sell_filled']}"
-            stop['status']= f"{result['stop_filled']}"
-            data.append(buy)
-            data.append(sell)
-            data.append(stop)
-            
-    return {'orders':data}
+    return filter_trades()
 
 
 ###################
@@ -482,7 +608,7 @@ def vue_all_trades():
 def cancel_order_request():
     order_to_cancel =request.get_json(silent=True)
     print(order_to_cancel)
-    cancel_pending_order(id=order_to_cancel['id'], symbol=order_to_cancel['symbol'], type=order_to_cancel['type'])
+    cancel_pending_order(id=order_to_cancel['id'], symbol=order_to_cancel['symbol'])
     return order_to_cancel
 
 
@@ -500,6 +626,65 @@ def cancel_order_request_and_sell_market():
     neworder =cancel_pending_order_and_sell_market(id=order_to_cancel['id'], symbol=order_to_cancel['symbol'])
     return neworder
 
+##########################
+# Pause all trades       #
+##########################
+
+@app.route('/trades/pause', methods=['POST'])
+@auth.login_required
+@cross_origin(origin='*',headers=['Content-Type'])
+def pause_all_trades():
+    orders_to_pause =request.get_json(silent=True)
+    print(orders_to_pause)
+    neworder =pause(orders=orders_to_pause)
+    return neworder
+
+##################
+# Get all paused #
+##################
+
+@app.route('/paused', methods=['GET'])
+@auth.login_required
+@cross_origin(origin='*',headers=['Content-Type'])
+def get_paused_trades():
+    return render_template("paused.html")
+
+@app.route('/paused/data/vue', methods=['GET'])
+@auth.login_required
+@cross_origin(origin='*',headers=['Content-Type'])
+def vue_all_paused():
+    orders = fetch_pauses_from_db()
+    data = []
+    for order in orders:
+        neworder={}
+        if order['type'] == 'stop_loss_limit':
+            neworder['type']= 'stop loss'
+            neworder['id'] = order['old_id']
+            neworder['symbol']=order['symbol']
+            neworder['price']=order['stopPrice']
+        elif order['type'] == 'limit' and order['side'] == 'buy' :
+            neworder['type'] = 'limit buy'
+            neworder['id'] = order['old_id']
+            neworder['symbol']=order['symbol']
+            neworder['price']=order['price']
+        elif order['type'] == 'limit' and order['side'] == 'sell':
+            neworder['type'] = 'limit sell'
+            neworder['id'] = order['old_id']
+            neworder['symbol']=order['symbol']
+            neworder['price']=order['price']
+        data.append(neworder)
+
+    return {'orders':data}
+
+@app.route('/paused/activate', methods=['POST'])
+@auth.login_required
+@cross_origin(origin='*',headers=['Content-Type'])
+def activate_paused_orders():
+    status = resume()
+    if status:
+        db.session.query(Pause).delete()
+        db.session.commit()
+    return status 
 
 
 # Start the app

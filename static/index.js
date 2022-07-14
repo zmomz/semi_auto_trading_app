@@ -22,8 +22,11 @@ new Vue({
     reset () {
       this.$formulate.reset('buycrypto')
     },
-    redirect(){
+    redirect_open(){
       window.location.href = '/trades'
+    },
+    redirect_pause(){
+      window.location.href = '/paused'
     }
   }
 })

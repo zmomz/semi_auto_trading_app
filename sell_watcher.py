@@ -9,7 +9,8 @@ while True:
         print('found buy order ids: ...',buy_orders)
         for buy_order in buy_orders:
             print('checking: ..', buy_order)
-            if check_filled_order(id=buy_order[1], symbol=buy_order[0]):
+            is_filled = check_filled_order(id=buy_order[1], symbol=buy_order[0])
+            if is_filled:
                 trade = fill_buy(buy_id=buy_order[1])
                 print(f"buy order {trade['id']} filled" )
                 
@@ -29,7 +30,8 @@ while True:
         print('found sell order ids: ...',sell_orders)
 
         for sell_order in sell_orders:
-            if check_filled_order(id=sell_order[1], symbol=sell_order[0]):
+            is_filled = check_filled_order(id=sell_order[1], symbol=sell_order[0])
+            if is_filled:
                 canceled=cancel_pending_order(id=sell_order[2], symbol=sell_order[0])
                 if canceled:
                     print('stoploss is canceled')
