@@ -6,12 +6,9 @@ from flask_httpauth import HTTPBasicAuth
 import os
 import time
 import jwt
-import sqlalchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from alembic import op
 
 
-op.alter_column(table_name='pause',column_name='old_id',existing_type=sqlalchemy.types.VARCHAR)
 
 import config
 # exchange = config.
@@ -200,6 +197,7 @@ pauses_schema = PauseSchema(many=True)
 #################
 # new buy trade #
 #################
+
 
 def add_buy_trade_to_db(base,quote,amount,buy_price,sell_price,stop_loss,buy_order_id):  
     # Create an instance
@@ -684,11 +682,12 @@ def vue_all_paused():
 @auth.login_required
 @cross_origin(origin='*',headers=['Content-Type'])
 def activate_paused_orders():
-    status = resume()
-    if status:
-        db.session.query(Pause).delete()
-        db.session.commit()
-    return status 
+    
+    # status = resume()
+    # if status:
+    #     db.session.query(Pause).delete()
+    #     db.session.commit()
+    return 'status' 
 
 
 # Start the app
