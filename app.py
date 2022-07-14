@@ -7,7 +7,7 @@ import os
 import time
 import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_migrate import Migrate
 
 
 import config
@@ -31,6 +31,7 @@ app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
 ma = Marshmallow(app)
+migrate = Migrate(app,db)
 
 CORS(app,resources={r"/api": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
