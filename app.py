@@ -9,8 +9,9 @@ import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import config
-# exchange = config.exchange
-# exchange.set_sandbox_mode(True)
+# exchange = config.
+from config import exchange
+exchange.set_sandbox_mode(True)
 ## Init app
 
 app = Flask(__name__)
