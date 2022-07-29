@@ -11,7 +11,8 @@ from flask_migrate import Migrate
 
 
 import config
-# exchange = config.
+# import dummy_config as config
+# from dummy_config import exchange
 from config import exchange
 # exchange.set_sandbox_mode(True)
 ## Init app
